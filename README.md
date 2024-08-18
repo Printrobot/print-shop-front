@@ -1,4 +1,4 @@
-# Описание Print Shop Front v0.0.
+# Описание Print Shop Front v0.0.3
 
 Этот репозиторий содержит описание web приложения Print Shop Front.
 
