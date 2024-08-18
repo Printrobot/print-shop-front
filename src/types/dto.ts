@@ -32,3 +32,24 @@ export interface PackInBoxResponseDto {
     boxesVolume: number;
     boxesInnerVolume: number;
 }
+
+export interface ImpositionRequestDto {
+    itemFormat: string;
+    itemDistance: string;
+    outFormat: string;
+    disableRotation: boolean;
+    useMirror: boolean;
+}
+
+export interface ImpositionResponseDto {
+    layout: {
+        width: number;
+        height: number;
+    };
+    fragments: {
+        byWidth: number;
+        byHeight: number;
+    }[];
+    total: number;
+    garbage: number;
+}

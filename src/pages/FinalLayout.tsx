@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Title from "antd/es/typography/Title";
 import Layout from "../components/Layout";
 import { Form, message, Space } from "antd";
@@ -9,6 +10,9 @@ import RotateRest from "../components/RotateRest";
 import { formConfig } from "../utils/formConfig";
 import Controls from "../components/Controls";
 import { useForm } from "antd/es/form/Form";
+import { useMutation } from "@tanstack/react-query";
+import { useApi } from "../context/ApiProvider";
+import { ImpositionRequestDto, ImpositionResponseDto } from "../types/dto";
 
 interface IForm {
     size: number;
@@ -25,12 +29,47 @@ interface IForm {
     bottomEmptyField: number;
 }
 
+const initialResult = {
+    layout: {
+        width: 0,
+        height: 0,
+    },
+    fragments: [
+        {
+            byWidth: 0,
+            byHeight: 0,
+        },
+    ],
+    total: 0,
+    garbage: 0,
+};
+
 const FinalLayout = () => {
     const [form] = useForm<IForm>();
+    const [result, setResult] = useState<ImpositionResponseDto>(initialResult);
+
+    const api = useApi();
+
+    const { mutate: impositionMutate } = useMutation({
+        mutationFn: (data: ImpositionRequestDto) => api.postImposition(data),
+        onSuccess: (result) => {
+            console.log(result);
+            setResult(result);
+            message.success("Расчет произведен успешно!");
+        },
+        onError: () => message.error(`Ошибка. См. консоль`),
+    });
 
     const handleFinish = async (values: IForm) => {
         console.log(values);
-        message.success("Переданные значения выведены в консоль");
+
+        impositionMutate({
+            itemFormat: `${values.width}x${values.height}`,
+            itemDistance: `${values.verticalSpacing}x${values.horizontalSpacing}`,
+            outFormat: `${values.paperWidth}x${values.paperHeight}`,
+            disableRotation: !values.allowRotateRest,
+            useMirror: false,
+        });
     };
 
     return (
@@ -71,7 +110,7 @@ const FinalLayout = () => {
                         <Layout />
                     </Border>
                     <Controls />
-                    <LayoutResult />
+                    <LayoutResult data={result} />
                 </Space>
             </Form>
         </div>
