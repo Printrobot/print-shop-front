@@ -2,6 +2,7 @@ import { Checkbox, Form, Radio, Select } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../context/ApiProvider";
 import { getOptions } from "../utils/getOptions";
+import { MICROMETERS_IN_METER } from "../constants/conversion";
 
 const Lamination = () => {
   const isLaminationOn = Form.useWatch("isLaminationOn");
@@ -22,7 +23,7 @@ const Lamination = () => {
   const laminatesOptions = getOptions(laminates ?? []);
   const laminateThicknessesOptions =
     laminateThicknesses?.map((d) => ({
-      label: d,
+      label: d * MICROMETERS_IN_METER,
       value: d,
     })) ?? [];
 
@@ -46,7 +47,10 @@ const Lamination = () => {
                 loading={isLaminatesLoading}
               />
             </Form.Item>
-            <Form.Item label={"Толщина ламината"} name="laminateThickness">
+            <Form.Item
+              label={"Толщина ламината (мкм)"}
+              name="laminateThickness"
+            >
               <Select
                 options={[...laminateThicknessesOptions]}
                 loading={isLaminateThicknessesLoading}

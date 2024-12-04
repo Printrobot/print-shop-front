@@ -31,6 +31,9 @@ interface IForm {
   laminateThickness: number;
   box: number;
   boxMargins: string;
+  boxWidth: string;
+  boxHeight: string;
+  boxLength: string;
 }
 
 interface ICalculatedFields {
@@ -156,9 +159,12 @@ const Leaflets = () => {
           isLaminationOn: false,
           laminationSides: 1,
           lamination: 1,
-          laminateThickness: 0.00003,
+          laminateThickness: 0,
           box: 1,
           boxMargins: "10x20x30",
+          boxWidth: 100,
+          boxHeight: 100,
+          boxLength: 100,
         }}
         autoComplete="off"
       >

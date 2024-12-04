@@ -6,7 +6,7 @@ const ApiContext = createContext<ApiClient | null>(null);
 export function ApiProvider({ children }: { children: React.ReactNode }) {
   const apiClient = useMemo(
     () => new ApiClient("http://print-robot.ru/api/v1"),
-    []
+    [],
   );
 
   return (

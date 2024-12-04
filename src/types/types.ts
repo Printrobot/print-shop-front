@@ -26,6 +26,8 @@ export interface IPaper {
 export interface PrintFormat {
   id: number;
   caption: string;
+  width: number;
+  height: number;
 }
 
 export interface PaperFacture {

@@ -2,13 +2,13 @@ const calcPaperWeight = (
   quantity: number,
   mediaGramsSqMeterWeight: number,
   detailWidth: number,
-  detailLength: number
+  detailLength: number,
 ) => (quantity * mediaGramsSqMeterWeight * detailWidth * detailLength) / 1e6; // gram;
 
 const calcOneSqMLaminateWeight = (
   filmRollWeightKg: number,
   filmRollLength: number,
-  filmRollWidth: number
+  filmRollWidth: number,
 ) => (1e6 * filmRollWeightKg) / (filmRollLength * filmRollWidth); // gram;
 
 const calcLaminateWeight = (
@@ -16,7 +16,7 @@ const calcLaminateWeight = (
   laminationSides: number,
   oneSqMLaminateWeight: number,
   detailWidth: number,
-  detailLength: number
+  detailLength: number,
 ) =>
   (quantity *
     laminationSides *
@@ -29,7 +29,7 @@ const calcPaperThickness = (mediaThicknessMm: number) => mediaThicknessMm;
 
 const calcLaminateThickness = (
   laminationSides: number,
-  filmThicknessMicron: number
+  filmThicknessMicron: number,
 ) => laminationSides * filmThicknessMicron * 1000;
 
 export const calcProductionWeight = ({
@@ -55,7 +55,7 @@ export const calcProductionWeight = ({
     quantity,
     mediaGramsSqMeterWeight,
     detailWidth,
-    detailLength
+    detailLength,
   ) +
   (laminationSides &&
     calcLaminateWeight(
@@ -63,7 +63,7 @@ export const calcProductionWeight = ({
       laminationSides,
       calcOneSqMLaminateWeight(filmRollWeightKg, filmRollLength, filmRollWidth),
       detailWidth,
-      detailLength
+      detailLength,
     )); // gram
 
 export const calcProductionHeight = ({
@@ -81,7 +81,7 @@ export const calcProductionHeight = ({
   (calcPaperThickness(mediaThicknessMm) +
     calcLaminateThickness(laminationSides, filmThicknessMicron)); // mm
 
-export const calcImposition = (
+export const calcImposition = () =>
   // boxWidth: number,
   // boxLength: number,
   // detailWidth: number,
@@ -93,12 +93,16 @@ export const calcImposition = (
   // marginUp: number,
   // marginDown: number,
   // isRotate: number
-) => ({ itemsX: 2, itemsY: 1, itemsRotated: 0 });
+  ({ itemsX: 2, itemsY: 1, itemsRotated: 0 });
 
 export const calcItemsTotal = () => {
   const { itemsX, itemsY, itemsRotated } = calcImposition();
   return itemsX * itemsY + itemsRotated;
 };
 
-export const calcBoxesCount = (productionHeightTotal: number, itemsTotal: number, boxHeight: number) =>
+export const calcBoxesCount = (
+  productionHeightTotal: number,
+  itemsTotal: number,
+  boxHeight: number,
+) =>
   itemsTotal && boxHeight ? productionHeightTotal / itemsTotal / boxHeight : 0;
