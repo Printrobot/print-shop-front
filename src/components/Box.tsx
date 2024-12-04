@@ -57,13 +57,13 @@ const Box: FC<IBoxProps> = () => {
 
   const handleChange = (_: any) => {
     form.setFieldsValue({
-      size: 0,
+      box: 0,
     });
   };
 
   return (
     <Form.Item noStyle>
-      <Form.Item label={"Коробка"} name="size" required>
+      <Form.Item label={"Коробка"} name="box" required>
         <Select
           options={[...boxOptions]}
           loading={isLoading}
