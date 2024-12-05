@@ -9,23 +9,26 @@ const Lamination = () => {
 
   const api = useApi();
 
-  const { data: laminates, isLoading: isLaminatesLoading } = useQuery({
+  const { data: laminates = [], isLoading: isLaminatesLoading } = useQuery({
     queryKey: ["laminate-types"],
     queryFn: () => api.getLaminates(),
   });
 
-  const { data: laminateThicknesses, isLoading: isLaminateThicknessesLoading } =
-    useQuery({
-      queryKey: ["laminate-thicknesses"],
-      queryFn: () => api.getLaminateThicknesses(),
-    });
+  //   const {
+  //     data: laminateThicknesses = [],
+  //     isLoading: isLaminateThicknessesLoading,
+  //   } = useQuery({
+  //     queryKey: ["laminate-thicknesses"],
+  //     queryFn: () => api.getLaminateThicknesses(),
+  //   });
+  // TODO: Remove hardcoded when API stops returning empty array
+  const laminateThicknesses = [0.00002, 0.00003];
 
-  const laminatesOptions = getOptions(laminates ?? []);
-  const laminateThicknessesOptions =
-    laminateThicknesses?.map((d) => ({
-      label: d * MICROMETERS_IN_METER,
-      value: d,
-    })) ?? [];
+  const laminatesOptions = getOptions(laminates);
+  const laminateThicknessesOptions = laminateThicknesses?.map((d) => ({
+    label: d * MICROMETERS_IN_METER,
+    value: d,
+  }));
 
   return (
     <>
@@ -53,7 +56,7 @@ const Lamination = () => {
             >
               <Select
                 options={[...laminateThicknessesOptions]}
-                loading={isLaminateThicknessesLoading}
+                // loading={isLaminateThicknessesLoading}
               />
             </Form.Item>
           </div>

@@ -13,6 +13,7 @@ import { useForm } from "antd/es/form/Form";
 import { useMutation } from "@tanstack/react-query";
 import { useApi } from "../context/ApiProvider";
 import { ImpositionRequestDto, ImpositionResponseDto } from "../types/dto";
+import ApplyMirror from "../components/ApplyMirror";
 
 interface IForm {
   size: number;
@@ -21,6 +22,7 @@ interface IForm {
   verticalSpacing: number;
   horizontalSpacing: number;
   allowRotateRest: boolean;
+  applyMirror: boolean;
   paperWidth: number;
   paperHeight: number;
   topEmptyField: number;
@@ -68,7 +70,7 @@ const FinalLayout = () => {
       itemDistance: `${values.verticalSpacing}x${values.horizontalSpacing}`,
       outFormat: `${values.paperWidth}x${values.paperHeight}`,
       disableRotation: !values.allowRotateRest,
-      useMirror: false,
+      useMirror: values.applyMirror,
     });
   };
 
@@ -87,6 +89,7 @@ const FinalLayout = () => {
           verticalSpacing: 1,
           horizontalSpacing: 1,
           allowRotateRest: false,
+          applyMirror: true,
           paperWidth: 1000,
           paperHeight: 1000,
           topEmptyField: 1,
@@ -101,6 +104,7 @@ const FinalLayout = () => {
             <Size />
             <Distance />
             <RotateRest />
+            <ApplyMirror />
           </Border>
           <Border>
             <Layout />

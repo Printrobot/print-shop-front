@@ -1,3 +1,5 @@
-export const MILLIMETERS_IN_METERS = 1000;
+export const MILLIMETERS_IN_METERS = 1_000;
 
 export const MICROMETERS_IN_METER = 1_000_000;
+
+export const GRAMS_IN_KILOGRAM = 1_000;

@@ -1,21 +1,17 @@
 import { Form, InputNumber, Select, Space } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../context/ApiProvider";
-import type { FC } from "react";
+import { useEffect, useMemo } from "react";
 import { IBox } from "../types/types";
 import { MILLIMETERS_IN_METERS } from "../constants/conversion";
 import { CloseOutlined } from "@ant-design/icons";
-
-interface IBoxProps {
-  handleSelect: (box: IBox) => void;
-}
 
 type Option = {
   label: string;
   value: number;
 };
 
-const Box: FC<IBoxProps> = () => {
+const Box = () => {
   const api = useApi();
   const form = Form.useFormInstance();
 
@@ -24,25 +20,44 @@ const Box: FC<IBoxProps> = () => {
     queryFn: () => api.getBoxes(),
   });
 
-  const boxMap = new Map<number, Pick<IBox, "width" | "height" | "length">>();
-  const boxOptions: Option[] = [];
+  const { boxMap, boxOptions } = useMemo(() => {
+    const map = new Map<number, Pick<IBox, "width" | "height" | "length">>();
+    const options: Option[] = [];
 
-  boxes?.forEach((b) => {
-    boxMap.set(b.id, {
-      width: b.width * MILLIMETERS_IN_METERS,
-      height: b.height * MILLIMETERS_IN_METERS,
-      length: b.length * MILLIMETERS_IN_METERS,
+    boxes.forEach((b) => {
+      map.set(b.id, {
+        width: b.width * MILLIMETERS_IN_METERS,
+        height: b.height * MILLIMETERS_IN_METERS,
+        length: b.length * MILLIMETERS_IN_METERS,
+      });
+      options.push({
+        label: b.article,
+        value: b.id,
+      });
     });
-    boxOptions.push({
-      label: b.article,
-      value: b.id,
-    });
-  });
 
-  boxOptions.push({
-    label: "---",
-    value: 0,
-  });
+    options.push({
+      label: "---",
+      value: 0,
+    });
+
+    return { boxMap: map, boxOptions: options };
+  }, [boxes]);
+
+  useEffect(() => {
+    if (boxOptions.length > 1 && boxOptions[0].value !== 0) {
+      const defaultOption = boxOptions[0];
+      const defaultSize = boxMap.get(defaultOption.value);
+
+      if (defaultSize) {
+        form.setFieldsValue({
+          boxWidth: defaultSize.width,
+          boxHeight: defaultSize.height,
+          boxLength: defaultSize.length,
+        });
+      }
+    }
+  }, [boxOptions, boxMap, form]);
 
   const handleSelect = (_: number, option: Option) => {
     const selectedSize = boxMap.get(option.value);
@@ -55,7 +70,7 @@ const Box: FC<IBoxProps> = () => {
     }
   };
 
-  const handleChange = (_: any) => {
+  const handleManualChange = (_: any) => {
     form.setFieldsValue({
       box: 0,
     });
@@ -77,7 +92,7 @@ const Box: FC<IBoxProps> = () => {
               min={1}
               max={10000}
               style={{ width: "100%" }}
-              onChange={handleChange}
+              onChange={handleManualChange}
             />
           </Form.Item>
           <div>
@@ -88,7 +103,7 @@ const Box: FC<IBoxProps> = () => {
               min={1}
               max={10000}
               style={{ width: "100%" }}
-              onChange={handleChange}
+              onChange={handleManualChange}
             />
           </Form.Item>
           <div>
@@ -99,7 +114,7 @@ const Box: FC<IBoxProps> = () => {
               min={1}
               max={10000}
               style={{ width: "100%" }}
-              onChange={handleChange}
+              onChange={handleManualChange}
             />
           </Form.Item>
         </Space>

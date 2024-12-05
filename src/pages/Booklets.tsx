@@ -40,7 +40,7 @@ const items = [
     label: "Обложка",
     children: (
       <>
-        <Material handleSelect={handleSelectNoop} parentItems={["cover"]} />
+        <Material parentItems={["cover"]} />
         <Divider />
         <Lamination />
       </>
@@ -51,7 +51,7 @@ const items = [
     label: "Блок",
     children: (
       <>
-        <Material handleSelect={handleSelectNoop} parentItems={["block"]} />
+        <Material parentItems={["block"]} />
       </>
     ),
   },

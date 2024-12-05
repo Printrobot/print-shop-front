@@ -14,12 +14,20 @@ import Box from "../components/Box";
 import { PackInBoxRequestDto, PackInBoxResponseDto } from "../types/dto";
 import { IBox, IPaper } from "../types/types";
 import { useApi } from "../context/ApiProvider";
+import {
+  GRAMS_IN_KILOGRAM,
+  MICROMETERS_IN_METER,
+  MILLIMETERS_IN_METERS,
+} from "../constants/conversion";
+
+const BOX_MARGINS = "10x20x30";
 
 interface IForm {
   size: number;
   width: number;
   height: number;
   quantity: number;
+  paper: number;
   materialType: number;
   paperColor: number;
   paperFacture: number;
@@ -101,7 +109,7 @@ const Leaflets = () => {
       ...prev,
       boxThickness: thickness,
       boxWeight: weight,
-      boxDimensions: `${length * 1000}x${width * 1000}x${height * 1000}`,
+      boxDimensions: `${length * MILLIMETERS_IN_METERS}x${width * MILLIMETERS_IN_METERS}x${height * MILLIMETERS_IN_METERS}`,
     }));
   };
 
@@ -113,28 +121,32 @@ const Leaflets = () => {
   };
 
   const handleFinish = async (values: IForm) => {
-    const { width, height, quantity, paperDensity, boxMargins } = values;
+    const { width, height, quantity, paperDensity } = values;
 
     const { paperThickness, boxThickness, boxDimensions, boxWeight } =
       calculatedFields;
 
     console.log({ formValues: values, calculatedFields });
 
-    packInBoxMutate({
+    const requestBody = {
       product: {
         format: `${width}x${height}`,
-        thickness: paperThickness * 1_000_000,
-        weightM2: paperDensity * 1000,
+        thickness: paperThickness * MICROMETERS_IN_METER,
+        weightM2: paperDensity * GRAMS_IN_KILOGRAM,
         quantity,
       },
       box: {
         format: boxDimensions,
-        thickness: boxThickness * 1000,
-        margins: boxMargins,
-        weight: boxWeight * 1000,
+        thickness: boxThickness * MILLIMETERS_IN_METERS,
+        margins: BOX_MARGINS,
+        weight: boxWeight * GRAMS_IN_KILOGRAM,
         maxWeight: 1,
       },
-    });
+    };
+
+    console.log({ requestBody });
+
+    packInBoxMutate(requestBody);
   };
 
   return (
@@ -152,6 +164,7 @@ const Leaflets = () => {
           height: 297,
           quantity: 100,
           materialType: 1,
+          paper: 1,
           paperColor: 1,
           paperFacture: 1,
           paperDensity: 0.08,
@@ -161,7 +174,6 @@ const Leaflets = () => {
           lamination: 1,
           laminateThickness: 0,
           box: 1,
-          boxMargins: "10x20x30",
           boxWidth: 100,
           boxHeight: 100,
           boxLength: 100,
@@ -174,10 +186,10 @@ const Leaflets = () => {
           </Border>
           <div style={{ padding: "1rem 1rem 0 1rem" }}>
             <Quantity />
-            <Box handleSelect={handleBoxSelect} />
+            <Box />
           </div>
           <Border>
-            <Material handleSelect={handlePaperSelect} />
+            <Material />
           </Border>
           <Border>
             <Lamination />

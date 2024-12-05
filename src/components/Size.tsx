@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../context/ApiProvider";
 import { PrintFormat } from "../types/types";
 import { MILLIMETERS_IN_METERS } from "../constants/conversion";
+import { useEffect, useMemo } from "react";
 
 type Option = {
   label: string;
@@ -14,29 +15,48 @@ const Size = () => {
   const form = Form.useFormInstance();
   const api = useApi();
 
-  const { data, isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: ["print-formats"],
     queryFn: () => api.getPrintFormats(),
   });
 
-  const sizeMap = new Map<number, Pick<PrintFormat, "width" | "height">>();
-  const sizeOptions: Option[] = [];
+  const { sizeMap, sizeOptions } = useMemo(() => {
+    const map = new Map<number, Pick<PrintFormat, "width" | "height">>();
+    const options: Option[] = [];
 
-  data?.forEach((s) => {
-    sizeMap.set(s.id, {
-      width: s.width * MILLIMETERS_IN_METERS,
-      height: s.height * MILLIMETERS_IN_METERS,
+    data.forEach((s) => {
+      map.set(s.id, {
+        width: s.width * MILLIMETERS_IN_METERS,
+        height: s.height * MILLIMETERS_IN_METERS,
+      });
+      options.push({
+        label: s.caption,
+        value: s.id,
+      });
     });
-    sizeOptions.push({
-      label: s.caption,
-      value: s.id,
-    });
-  });
 
-  sizeOptions.push({
-    label: "---",
-    value: 0,
-  });
+    options.push({
+      label: "---",
+      value: 0,
+    });
+
+    return { sizeMap: map, sizeOptions: options };
+  }, [data]);
+
+  useEffect(() => {
+    if (sizeOptions.length > 1 && sizeOptions[0].value !== 0) {
+      const defaultOption = sizeOptions[0];
+      const defaultSize = sizeMap.get(defaultOption.value);
+
+      if (defaultSize) {
+        form.setFieldsValue({
+          size: defaultOption.value,
+          width: defaultSize.width,
+          height: defaultSize.height,
+        });
+      }
+    }
+  }, [sizeOptions, sizeMap, form]);
 
   const handleSelect = (_: number, option: Option) => {
     const selectedSize = sizeMap.get(option.value);
@@ -48,7 +68,7 @@ const Size = () => {
     }
   };
 
-  const handleChange = (_: any) => {
+  const handleManualChange = (_: any) => {
     form.setFieldsValue({
       size: 0,
     });
@@ -58,7 +78,7 @@ const Size = () => {
     <Form.Item noStyle>
       <Form.Item label={"Размер"} name="size" required>
         <Select
-          options={[...sizeOptions]}
+          options={sizeOptions}
           loading={isLoading}
           onSelect={handleSelect}
         />
@@ -70,7 +90,7 @@ const Size = () => {
               min={1}
               max={10000}
               style={{ width: "100%" }}
-              onChange={handleChange}
+              onChange={handleManualChange}
             />
           </Form.Item>
           <div>
@@ -81,7 +101,7 @@ const Size = () => {
               min={1}
               max={10000}
               style={{ width: "100%" }}
-              onChange={handleChange}
+              onChange={handleManualChange}
             />
           </Form.Item>
         </Space>
