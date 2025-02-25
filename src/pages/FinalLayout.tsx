@@ -3,6 +3,7 @@ import Title from "antd/es/typography/Title";
 import Layout from "../components/Layout";
 import { Form, message, Space } from "antd";
 import LayoutResult from "../components/LayoutResult";
+import LayoutGridResult from "../components/LayoutGridResult";
 import Distance from "../components/Distance";
 import Size from "../components/Size";
 import Border from "../ui/Border";
@@ -111,6 +112,7 @@ const FinalLayout = () => {
           </Border>
           <Controls />
           <LayoutResult data={result} />
+          <LayoutGridResult data={result} />
         </Space>
       </Form>
     </div>

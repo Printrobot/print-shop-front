@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Col, Menu, Row } from "antd";
+import Share from "./components/Share";
+import BoxesInBox from "./pages/BoxesInBox";
 import Leaflets from "./pages/Leaflets";
 import Booklets from "./pages/Booklets";
-import Share from "./components/Share";
 import FinalLayout from "./pages/FinalLayout";
 import { ApiProvider } from "./context/ApiProvider";
 
 const items = [
+  {
+    label: "Коробки",
+    key: "boxes",
+  },
   {
     label: "Листовки",
     key: "leaflets",
@@ -29,6 +34,8 @@ const App = () => {
 
   const getPage = () => {
     switch (nav) {
+      case "boxes":
+        return <BoxesInBox />;
       case "leaflets":
         return <Leaflets />;
       case "booklets":
